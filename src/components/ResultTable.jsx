@@ -3,42 +3,97 @@ import NewRow from "./NewRow";
 
 function ResultTable(props) {
   //fetch API
-  const apiKey = "caeoijqad3i9ra0rcbpg";
+  const apiKey = "cag26fqad3i28b9p2jt0";
   const url = `https://finnhub.io/api/v1/quote?symbol=${props.symbols}&token=${apiKey}`;
 
-  const [openPrice, setOpenPrice] = useState("");
-  const [highPrice, setHighPrice] = useState("");
-  const [lowPrice, setLowPrice] = useState("");
-  const [closePrice, setClosePrice] = useState("");
-  const [currentPrice, setCurrentPrice] = useState("");
-  const [isFinishedFetching, setIsFinishedFetching] = useState(false)
-  const [currentDate1, setCurrentDate1] = useState({});
-
+  const [flag, updateFlag] = useState(true);
+  const [data, setData] = useState([
+    {
+      key: 1,
+      openPrice: 0,
+      highPrice: 0,
+      lowPrice: 0,
+      closePrice: 0,
+      currentPrice: 0,
+      currentDate: "",
+    }])
   
   const totalTime = props.minutes * 60000 + props.seconds * 1000;
-  
 
-  //need to work on the daley
-  useEffect(()=>{
-    setTimeout(()=>{
-      fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setOpenPrice(data.o);
-        setHighPrice(data.h);
-        setLowPrice(data.l);
-        setClosePrice(data.pc);
-        setCurrentPrice(data.c);
-        console.log(props.symbols)
-        console.log(data)
-      })
-      .catch((error) => console.log(error));
-      setIsFinishedFetching(true);
-      let d1 = new Date();
-      setCurrentDate1(d1)
-    }, totalTime)
+  
+  // function handleData(){
+  //   console.log("hello")
+  //   useEffect(()=>{
+  //     fetch(url)
+  //     .then((response) => response.json())
+  //     .then((d) => {
+  //       const date = new Date()
+  //       const time = date.toLocaleString();
+  //       const updateData =[
+  //         ...data,
+  //         {
+  //           key: data.length + 1,
+  //           openPrice: d.o,
+  //           highPrice: d.h,
+  //           lowPrice: d.l,
+  //           closePrice: d.pc,
+  //           currentPrice: d.c,
+  //           currentDate: time,
+  //         }
+  //       ]
+
+  //       setData(updateData);
+  //     })
+  //     .catch((error) => console.log(error));
+  //   }, [])
     
-  },[])
+  // }
+  useEffect(()=>{
+    const abortController = new AbortController();
+    fetch(url)
+    .then((response) => response.json())
+    .then((d) => {
+      const date = new Date()
+      const time = date.toLocaleString();
+      const updateData =[
+        ...data,
+        {
+          key: data.length + 1,
+          openPrice: d.o,
+          highPrice: d.h,
+          lowPrice: d.l,
+          closePrice: d.pc,
+          currentPrice: d.c,
+          currentDate: time,
+        }
+      ]
+      console.log(data);
+      setData(updateData);
+    })
+    .catch((error) => console.log(error));
+    return () => {
+      // this will cancel the fetch request when the effect is unmounted
+      abortController.abort();
+    }
+  }, [flag])
+
+  const rows = data.slice(1).map((item)=>{
+    return (
+      <NewRow
+        key={item.key}
+        openPrice={item.openPrice}
+        highPrice={item.highPrice}
+        lowPrice={item.lowPrice}
+        currentPrice={item.currentPrice}
+        closePrice={item.closePrice}
+        currentDate={item.currentDate}
+      />
+    )
+  })
+
+  setInterval(()=>{
+    updateFlag(!flag)
+  }, totalTime)
   
   return (
     <table className="table">
@@ -53,26 +108,7 @@ function ResultTable(props) {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>${props.openPrice}</td>
-          <td>${props.highPrice}</td>
-          <td>${props.lowPrice}</td>
-          <td>${props.currentPrice}</td>
-          <td>${props.closePrice}</td>
-          <td>
-            {props.currentDate.toLocaleString()}
-          </td>
-        </tr>
-        {isFinishedFetching === true ? (
-          <NewRow
-            openPrice={openPrice}
-            highPrice={highPrice}
-            lowPrice={lowPrice}
-            currentPrice={currentPrice}
-            closePrice={closePrice}
-            currentDate={currentDate1}
-          />
-        ) : null}
+        {rows}
       </tbody>
     </table>
   );

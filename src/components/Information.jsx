@@ -18,21 +18,6 @@ function Information() {
 
   const d = new Date();
 
-  // useEffect(() => {
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setOpenPrice(data.o);
-  //       setHighPrice(data.h);
-  //       setLowPrice(data.l);
-  //       setClosePrice(data.pc);
-  //       setCurrentPrice(data.c);
-  //       console.log(data)
-  //     })
-  //     .catch((error) => console.log(error));
-  // }, [isSubmitted]);
-
-  //Handling events
   function handlingMinute(event) {
     updateMinute(event.target.value);
   }
@@ -42,7 +27,6 @@ function Information() {
   }
 
   function handlingSymbol(event) {
-    console.log("symbol changed")
     updateSymbols(event.target.value);
   }
 
@@ -81,12 +65,7 @@ function Information() {
             symbols={symbols}
             minutes={minutes}
             seconds={seconds}
-            openPrice={openPrice}
-            highPrice={highPrice}
-            lowPrice={lowPrice}
-            currentPrice={currentPrice}
-            closePrice={closePrice}
-            currentDate={d}
+            currentDate={currentDate}
           />
         </div>
       )}

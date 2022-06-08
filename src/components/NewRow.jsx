@@ -8,7 +8,7 @@ function NewRow(props) {
       <td>${props.currentPrice}</td>
       <td>${props.closePrice}</td>
       <td>
-        {props.currentDate.toLocaleString()}
+        {props.currentDate}
       </td>
     </tr>
   );
